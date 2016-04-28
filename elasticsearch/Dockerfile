@@ -32,8 +32,8 @@ RUN set -ex \
 
 COPY config ./config
 
-#VOLUME /usr/share/elasticsearch/data
 RUN chmod -R og+w /usr/share/elasticsearch
+USER 1000
 
 COPY docker-entrypoint.sh /
 
