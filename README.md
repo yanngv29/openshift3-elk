@@ -2,9 +2,7 @@
 
 **Under construction**
 
-These are modified dockerfiles and templates from: https://github.com/openshift/origin-aggregated-logging
-
-I removed ssl and authentication because it complicates the setup and I do not need it for the internal network.
+These are modified dockerfiles from the official docker images. I removed the gosu stuff and made sure relevant files are world readable.
 
 ## Usage
 
