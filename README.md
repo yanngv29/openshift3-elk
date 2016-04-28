@@ -14,7 +14,7 @@ docker build -t elasticsearch elasticsearch
 docker build -t kibana kibana
 
 docker run -it --rm --name elasticsearch elasticsearch
-docker run -it --rm -e ELASTICSEARCH_URL=elasticsearch:9200 --link elasticsearch:elasticsearch -p 5601:5601 kibana
+docker run -it --rm --link elasticsearch:elasticsearch -p 5601:5601 kibana
 ```
 ### Openshift
 ```

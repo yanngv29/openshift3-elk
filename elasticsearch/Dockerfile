@@ -8,7 +8,7 @@ USER 0
 
 ENV HOME=/opt/app-root/src \
   JAVA_VER=1.8.0 \
-  ES_VER=1.5.2 \
+  ES_VER=2.3.2 \
   ES_CONF=/usr/share/elasticsearch/config/elasticsearch.yml \
   INSTANCE_RAM=8G \
   NODE_QUORUM=1 \
@@ -18,7 +18,7 @@ ENV HOME=/opt/app-root/src \
   PLUGIN_LOGLEVEL=INFO
 
 LABEL io.k8s.description="Elasticsearch container for allowing indexing and searching of aggregated logs" \
-  io.k8s.display-name="Elasticsearch 1.5.2" \
+  io.k8s.display-name="Elasticsearch 2.3.2" \
   io.openshift.expose-services="9200:https, 9300:https" \
   io.openshift.tags="logging,elk,elasticsearch"
 
