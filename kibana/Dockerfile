@@ -27,8 +27,10 @@ ENV PATH /opt/kibana/bin:$PATH
 
 COPY docker-entrypoint.sh /
 
-RUN chmod -R og+w /opt/kibana
-
 EXPOSE 5601
+
+RUN chmod -R og+w /opt/kibana
+USER 1000
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["kibana"]

@@ -32,11 +32,12 @@ RUN set -ex \
 
 COPY config ./config
 
-RUN chmod -R og+w /usr/share/elasticsearch
-USER 1000
-
 COPY docker-entrypoint.sh /
 
 EXPOSE 9200 9300
+
+RUN chmod -R og+w /usr/share/elasticsearch
+USER 1000
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["elasticsearch"]
