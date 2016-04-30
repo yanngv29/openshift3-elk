@@ -15,6 +15,7 @@ docker-compose up
 oc new-project elk
 oc new-app lbischof/kibana
 oc new-app lbischof/elasticsearch
-oc new-app lbischof/logstash
+oc new-app https://github.com/lbischof/openshift3-elk.git --context-dir example --name logstash-git
+oc expose service kibana
 ```
 
