@@ -1,33 +1,31 @@
-FROM java:8-jre
+FROM openshift/base-centos7
 
-# install plugin dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		libzmq3 \
-	&& rm -rf /var/lib/apt/lists/*
+MAINTAINER Lorenz Bischof <bischof@puzzle.ch>
 
-# the "ffi-rzmq-core" gem is very picky about where it looks for libzmq.so
-RUN mkdir -p /usr/local/lib \
-	&& ln -s /usr/lib/*/libzmq.so.3 /usr/local/lib/libzmq.so
+ENV LOGSTASH_VERSION=2.3.0 \
+    ELASTICSEARCH_SERVICE_HOST=elasticsearch
 
-# https://www.elastic.co/guide/en/logstash/2.3/package-repositories.html
-# https://packages.elastic.co/GPG-KEY-elasticsearch
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4
+LABEL io.k8s.description="Logstash" \
+      io.k8s.display-name="logstash ${LOGSTASH_VERSION}" \
+      io.openshift.expose-services="8080:http" \
+      io.openshift.tags="logstash,${LOGSTASH_VERSION},elk"
 
-ENV LOGSTASH_MAJOR 2.3
-ENV LOGSTASH_VERSION 1:2.3.2-1
+RUN \
+  rpm --rebuilddb && yum clean all && \
+  yum install -y tar java-1.8.0-openjdk openssl && \
+  cd /opt/app-root && \
+  curl -O https://download.elasticsearch.org/logstash/logstash/logstash-${LOGSTASH_VERSION}.tar.gz && \
+  tar zxvf logstash-${LOGSTASH_VERSION}.tar.gz -C /opt/app-root --strip-components=1 && \
+  rm -f logstash-${LOGSTASH_VERSION}.tar.gz && \
+  yum clean all -y
 
-RUN echo "deb http://packages.elastic.co/logstash/${LOGSTASH_MAJOR}/debian stable main" > /etc/apt/sources.list.d/logstash.list
+# Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image sets io.openshift.s2i.scripts-url label that way, or update that label
+COPY ./.s2i/bin/ /usr/libexec/s2i
 
-RUN set -x \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
-	&& rm -rf /var/lib/apt/lists/*
+# Drop the root user and make the content of /opt/app-root owned by user 1001
+RUN chown -R 1001:1001 /opt/app-root
 
-ENV PATH /opt/logstash/bin:$PATH
+# This default user is created in the openshift/base-centos7 image
+USER 1001
 
-COPY docker-entrypoint.sh /
-
-USER 1000
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["logstash", "agent"]
+CMD ["/usr/libexec/s2i/usage"]
