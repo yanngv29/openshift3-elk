@@ -30,9 +30,12 @@ RUN set -ex \
 		chown -R elasticsearch:elasticsearch "$path"; \
 	done
 
-COPY config ./config
+VOLUME ./data
 
-COPY docker-entrypoint.sh /
+ADD https://raw.githubusercontent.com/lbischof/openshift3-elk/master/elasticsearch/config/elasticsearch.yml ./config/
+ADD https://raw.githubusercontent.com/lbischof/openshift3-elk/master/elasticsearch/config/logging.yml ./config/
+
+ADD https://raw.githubusercontent.com/lbischof/openshift3-elk/master/elasticsearch/docker-entrypoint.sh /
 
 EXPOSE 9200 9300
 
